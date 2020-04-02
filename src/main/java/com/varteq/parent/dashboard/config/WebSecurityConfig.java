@@ -19,32 +19,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http    .authorizeRequests()
-                .mvcMatchers("/")
+        http
+                .antMatcher("/**")
+                .authorizeRequests()
+                .mvcMatchers("/", "/login**")
                 .permitAll()
-                .anyRequest()
+                .antMatchers("/users/**", "/courses/**")
                 .authenticated()
-                .and()
-                .csrf().disable();
+                .and().logout().logoutSuccessUrl("/").permitAll()
+
+                .and().csrf().disable();
     }
 
     @Bean
-    public PrincipalExtractor principalExtractor (UserRepository userRepository){
+    public PrincipalExtractor principalExtractor(UserRepository userRepository) {
         return map -> {
-            String id = (String) map.get("sub");
-
-           UserEntity userEntity = userRepository.findById(id).orElseGet(() -> {
+            Long id = (Long) map.get("sub");
+            UserEntity userEntity = userRepository.findById(id).orElseGet(() -> {
                 UserEntity user = new UserEntity();
                 user.setId(id);
                 user.setName((String) map.get("name"));
                 user.setEmail((String) map.get("email"));
 
-                return user;
+                return userRepository.save(user);
             });
 
             userEntity.setVisit(LocalDateTime.now());
 
             return userRepository.save(userEntity);
         };
+
     }
 }

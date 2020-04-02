@@ -6,12 +6,14 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
-@Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Table(name = "users")
 public class UserEntity {
 
@@ -19,7 +21,7 @@ public class UserEntity {
     @GeneratedValue(generator="system-uuid", strategy = GenerationType.AUTO)
     @GenericGenerator(name="system-uuid", strategy = "uuid")
     @Column(name = "id")
-    private String id;
+    private Long id;
 
     @Column(name="name")
     private String name;
@@ -36,28 +38,31 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "isStudent")
+    private boolean isStudent;
+
+    @Column(name = "isParent")
+    private boolean isParent;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(
                     name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-    private List<RoleEntity> roles;
+    private Set<RoleEntity> roles;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "journal_id", referencedColumnName = "id")
-    private JournalEntity journal;
+    @JoinColumn(name = "gradebook_id", referencedColumnName = "id")
+    private GradeBookEntity gradebook;
 
-    @Override
-    public String toString() {
-        return "UserEntity{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", email='" + email + '\'' +
-                ", visit=" + visit +
-                ", password='" + password + '\'' +
-                ", roles=" + roles +
-                ", journal=" + journal +
-                '}';
-    }
+    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinTable(name = "users_courses", joinColumns = @JoinColumn(
+            name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "couse_id", referencedColumnName = "id"))
+    private List<CourseEntity> courses;
+
+    @ManyToOne
+    @JoinColumn(name="homework_id", nullable=false)
+    private HomeWorkEntity homeWork;
+    
 }
 

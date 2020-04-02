@@ -1,17 +1,52 @@
 package com.varteq.parent.dashboard.rest;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.varteq.parent.dashboard.model.UserEntity;
+import com.varteq.parent.dashboard.repo.UserRepository;
+import com.varteq.parent.dashboard.security.RoleName;
+import com.varteq.parent.dashboard.serviceImpl.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Autowired
+    private UserServiceImpl userService;
+
+
     @GetMapping
-    public String getAll(){
-        return "users";
+    public List<UserEntity> getAll() {
+
+        return userService.findAll();
+    }
+
+    @GetMapping(value = "/{userId}")
+    public UserEntity getUser(@PathVariable Long userId) {
+
+        return userService.load(userId);
+    }
+
+    @PostMapping
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public UserEntity saveUser(@Valid @RequestBody UserEntity user,
+                               @RequestParam(name = "roleNames", required = false) List<RoleName> roleNames) {
+
+        return userService.save(user, roleNames);
+    }
+
+    @PutMapping
+    public UserEntity updateUser(@Valid @RequestBody UserEntity userToUpdate) {
+
+        return userService.update(userToUpdate);
+    }
+
+    @DeleteMapping(value = "/{userId}")
+    public void deleteUser(@PathVariable Long userId) {
+        userService.remove(userId);
     }
 }

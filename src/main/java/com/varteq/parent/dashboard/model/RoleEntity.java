@@ -1,17 +1,23 @@
 package com.varteq.parent.dashboard.model;
 
-import lombok.Data;
+import com.varteq.parent.dashboard.security.RoleName;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Data
 @Table(name="roles")
 public class RoleEntity {
 
@@ -21,8 +27,10 @@ public class RoleEntity {
     private String Id;
 
 
-    @Column(unique = true)
-    private String name;
+    @Column(name = "name", length = 50)
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private RoleName name;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
     private List<UserEntity> users;
