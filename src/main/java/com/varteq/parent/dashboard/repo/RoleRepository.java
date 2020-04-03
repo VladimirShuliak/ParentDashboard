@@ -10,6 +10,6 @@ import java.util.Set;
 public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
 
     RoleEntity findByName(RoleName name);
+
     Set<RoleEntity> findByNameIn(List<RoleName> roleNames);
-    Set<RoleEntity> findByNameNotIn(List<RoleName> excludeNames);
 }

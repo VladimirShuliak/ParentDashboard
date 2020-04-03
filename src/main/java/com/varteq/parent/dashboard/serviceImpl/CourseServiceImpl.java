@@ -38,41 +38,50 @@ public class CourseServiceImpl implements CourseService {
     public CourseEntity save(CourseEntity course) {
         Long courseId = course.getId();
         log.debug("Save user {}", courseId);
-        Optional<CourseEntity> courseEntity = repository.findById(courseId);
+
         if (course.getId() != null && repository.existsById(courseId)) {
             throw new EntityExistsException("Failed to save, course already exists, id:" + course.getId());
         }
 
-            courseEntity.get().setName(course.getName());
-            courseEntity.get().setStart(course.getStart());
-            courseEntity.get().setEnd(course.getEnd());
-            courseEntity.get().setHomeWork(course.getHomeWork());
-            courseEntity.get().setUsers(course.getUsers());
-            courseEntity.get().setGradeBooks(course.getGradeBooks());
+        CourseEntity courseEntity = new CourseEntity();
 
-            return courseEntity.get();
-        }
+        courseEntity.setId(course.getId());
+        courseEntity.setName(course.getName());
+        courseEntity.setStart(course.getStart());
+        courseEntity.setEnd(course.getEnd());
+        courseEntity.setUsers(course.getUsers());
+        courseEntity.setGradeBooks(course.getGradeBooks());
+        courseEntity.setHomeWork(course.getHomeWork());
+
+        repository.save(courseEntity);
+
+        return courseEntity;
+    }
 
     @Override
     public CourseEntity update(CourseEntity course) {
+        Long courseId = course.getId();
+        log.debug("Update course by id {}", course.getId());
 
-            Long courseId = course.getId();
-            log.debug("Update course by id {}", course.getId());
+        Optional<CourseEntity> courseEntityForId = repository.findById(courseId);
 
-            Optional<CourseEntity> courseEntity = repository.findById(courseId);
+        if (courseId == null || !courseId.equals(courseEntityForId.get().getId())) {
+            throw new EntityNotFoundException("Failed to update, course doesn't exist id:" + courseId);
+        }
 
-            if (courseId == null || !courseId.equals(courseEntity.get().getId())) {
-                throw new EntityNotFoundException("Failed to update, course doesn't exist id:" + courseId);
-            }
+        CourseEntity courseEntity = new CourseEntity();
 
-        courseEntity.get().setName(course.getName());
-        courseEntity.get().setStart(course.getStart());
-        courseEntity.get().setEnd(course.getEnd());
-        courseEntity.get().setHomeWork(course.getHomeWork());
-        courseEntity.get().setUsers(course.getUsers());
-        courseEntity.get().setGradeBooks(course.getGradeBooks());
+        courseEntity.setId(courseEntityForId.get().getId());
+        courseEntity.setName(course.getName());
+        courseEntity.setStart(course.getStart());
+        courseEntity.setEnd(course.getEnd());
+        courseEntity.setUsers(course.getUsers());
+        courseEntity.setGradeBooks(course.getGradeBooks());
+        courseEntity.setHomeWork(course.getHomeWork());
 
-            return courseEntity.get();
+        repository.save(courseEntity);
+
+        return courseEntity;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.varteq.parent.dashboard.rest;
 
 import com.varteq.parent.dashboard.model.UserEntity;
-import com.varteq.parent.dashboard.repo.UserRepository;
 import com.varteq.parent.dashboard.security.RoleName;
 import com.varteq.parent.dashboard.serviceImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +19,15 @@ public class UserController {
 
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<UserEntity> getAll() {
 
         return userService.findAll();
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{userId}")
-    public UserEntity getUser(@PathVariable Long userId) {
+    public UserEntity getUser(@PathVariable String userId) {
 
         return userService.load(userId);
     }
@@ -40,13 +41,14 @@ public class UserController {
     }
 
     @PutMapping
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
     public UserEntity updateUser(@Valid @RequestBody UserEntity userToUpdate) {
 
         return userService.update(userToUpdate);
     }
 
     @DeleteMapping(value = "/{userId}")
-    public void deleteUser(@PathVariable Long userId) {
+    public void deleteUser(@PathVariable String userId) {
         userService.remove(userId);
     }
 }

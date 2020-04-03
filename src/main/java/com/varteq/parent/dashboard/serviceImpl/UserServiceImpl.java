@@ -1,7 +1,9 @@
 package com.varteq.parent.dashboard.serviceImpl;
 
+import com.varteq.parent.dashboard.model.HomeWorkEntity;
 import com.varteq.parent.dashboard.model.RoleEntity;
 import com.varteq.parent.dashboard.model.UserEntity;
+import com.varteq.parent.dashboard.repo.HomeWorkRepository;
 import com.varteq.parent.dashboard.repo.RoleRepository;
 import com.varteq.parent.dashboard.repo.UserRepository;
 import com.varteq.parent.dashboard.security.RoleName;
@@ -30,16 +32,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository repository;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
     @Override
     public List<UserEntity> findAll() {
         return repository.findAll();
     }
 
+    @Autowired
+    private RoleRepository roleRepository;
+
     @Override
-    public UserEntity load(Long userId) {
+    public UserEntity load(String userId) {
         log.debug("Load user by id {}", userId);
         Optional<UserEntity> user = repository.findById(userId);
         if (user == null) {
@@ -50,47 +52,60 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity save(UserEntity user, List<RoleName> roleNames) {
-        Long userId = user.getId();
         log.debug("Save user {}", user);
-        if (user.getId() != null && repository.existsById(userId)) {
+        if (user.getId() != null && repository.existsById(user.getId())) {
             throw new EntityExistsException("Failed to save, user already exists, id:" + user.getId());
         }
 
-        Optional<UserEntity> userEntity = repository.findById(user.getId());
+        UserEntity userEntity = new UserEntity();
 
-        Set<RoleEntity> roleEntity = getAvailableRoleEntity(roleNames);
-        userEntity.get().setRoles(roleEntity);
-        userEntity.get().setPassword(passwordEncoder.encode(user.getPassword()));
-        userEntity.get().setEmail(user.getEmail());
-        userEntity.get().setName(user.getName());
-//        user.isStudent(user.getIsStudent);
-//        user.isParent(user.getIsParent);
-//        userEntity.setJournal(user.getJournal());
+        userEntity.setId(user.getId());
+        userEntity.setName(user.getName());
+        userEntity.setSurname(user.getSurname());
+        userEntity.setEmail(user.getEmail());
+        userEntity.setVisit(java.time.LocalDateTime.now());
+        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userEntity.setRoles(getAvailableRoleEntity(roleNames));
+        userEntity.setGradebook(user.getGradebook());
+        userEntity.setCourses(user.getCourses());
+        userEntity.setHomeWork(user.getHomeWork());
 
-        return userEntity.get();
+        repository.save(userEntity);
+
+        return userEntity;
     }
 
     @Override
     public UserEntity update(UserEntity user) {
-        Long userId = user.getId();
+        String userId = user.getId();
         log.debug("Update user by id {}", userId);
 
-        Optional<UserEntity> userEntity = repository.findById(userId);
+        Optional<UserEntity> userEntityForId = repository.findById(userId);
 
-        if (userId == null || !userId.equals(userEntity.get().getId())) {
+        if (userId == null || !userId.equals(userEntityForId.get().getId())) {
             throw new EntityNotFoundException("Failed to update, user doesn't exist id:" + userId);
         }
 
-        userEntity.get().setName(user.getName());
-        userEntity.get().setSurname(user.getSurname());
-        userEntity.get().setPassword(user.getPassword());
-        userEntity.get().setEmail(user.getEmail());
+        UserEntity userEntity = new UserEntity();
 
-        return userEntity.get();
+        userEntity.setId(userEntityForId.get().getId());
+        userEntity.setName(user.getName());
+        userEntity.setSurname(user.getSurname());
+        userEntity.setEmail(user.getEmail());
+        userEntity.setVisit(java.time.LocalDateTime.now());
+        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+        userEntity.setRoles(user.getRoles());
+        userEntity.setGradebook(user.getGradebook());
+        userEntity.setCourses(user.getCourses());
+        userEntity.setHomeWork(user.getHomeWork());
+
+        repository.save(userEntity);
+
+        return userEntity;
     }
 
     @Override
-    public void remove(Long userId) {
+    public void remove(String userId) {
         log.debug("Remove user by id {}", userId);
         repository.deleteById(userId);
     }

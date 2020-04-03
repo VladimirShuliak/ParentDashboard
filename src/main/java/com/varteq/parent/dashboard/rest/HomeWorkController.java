@@ -4,6 +4,7 @@ import com.varteq.parent.dashboard.model.HomeWorkEntity;
 import com.varteq.parent.dashboard.serviceImpl.HomeWorkServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -27,7 +28,7 @@ public class HomeWorkController {
         return homeWorkService.load(homeWorkId);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.CREATED)
     public HomeWorkEntity save(@Valid @RequestBody HomeWorkEntity homeWork) {
 

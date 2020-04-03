@@ -29,23 +29,25 @@ public class GradeBookServiceImpl implements GradeBookService {
         log.debug("Load gradeBook by id {}", gradeBookId);
         Optional<GradeBookEntity> gradeBook = repository.findById(gradeBookId);
         if (gradeBook == null) {
-            throw new EntityNotFoundException("Journal doesn't exist, id " + gradeBookId);
+            throw new EntityNotFoundException("GradeBook doesn't exist, id " + gradeBookId);
         }
         return gradeBook.get();
     }
 
     @Override
-    public GradeBookEntity save(GradeBookEntity gradebook) {
-        log.debug("Save gradebook {}", gradebook);
-        if (gradebook.getId() != null && repository.existsById(gradebook.getId())) {
-            throw new EntityExistsException("Failed to save, gradebook already exists, id:" + gradebook.getId());
+    public GradeBookEntity save(GradeBookEntity gradeBook) {
+        log.debug("Save gradebook {}", gradeBook);
+        if (gradeBook.getId() != null && repository.existsById(gradeBook.getId())) {
+            throw new EntityExistsException("Failed to save, gradebook already exists, id:" + gradeBook.getId());
         }
 
-        GradeBookEntity gradeBookEntity = gradebook;
+        GradeBookEntity gradeBookEntity = gradeBook;
 
-        gradeBookEntity.setId(gradebook.getId());
-        gradeBookEntity.setGrade(gradebook.getGrade());
-        gradeBookEntity.setUser(gradebook.getUser());
+        gradeBookEntity.setId(gradeBook.getId());
+        gradeBookEntity.setGrade(gradeBook.getGrade());
+        gradeBookEntity.setUser(gradeBook.getUser());
+
+        repository.save(gradeBookEntity);
 
         return gradeBookEntity;
 
@@ -53,19 +55,27 @@ public class GradeBookServiceImpl implements GradeBookService {
 
     @Override
     public GradeBookEntity update(GradeBookEntity gradeBook) {
-        Long journalId = gradeBook.getId();
-        log.debug("Update gradeBook by id {}", journalId);
+        Long gradeBookId = gradeBook.getId();
+        log.debug("Update gradeBook by id {}", gradeBookId);
 
-        Optional<GradeBookEntity> gradeBookEntity = repository.findById(journalId);
+        Optional<GradeBookEntity> gradeBookEntityForId = repository.findById(gradeBookId);
 
-        if (journalId == null || !journalId.equals(gradeBookEntity.get().getId())) {
-            throw new EntityNotFoundException("Failed to update, gradeBook doesn't exist id:" + journalId);
+        if (gradeBookId == null || !gradeBookId.equals(gradeBookEntityForId.get().getId())) {
+            throw new EntityNotFoundException("Failed to update, gradeBook doesn't exist id:" + gradeBookId);
         }
 
-        gradeBookEntity.get().setUser(gradeBook.getUser());
-        gradeBookEntity.get().setGrade(gradeBook.getGrade());
+        GradeBookEntity gradeBookEntity = new GradeBookEntity();
 
-        return gradeBookEntity.get();
+        gradeBookEntity.setId(gradeBookEntityForId.get().getId());
+        gradeBookEntity.setGrade(gradeBook.getGrade());
+        gradeBookEntity.setDateFrom(gradeBook.getDateFrom());
+        gradeBookEntity.setDateFrom(gradeBook.getDateTo());
+        gradeBookEntity.setCourses(gradeBook.getCourses());
+        gradeBookEntity.setHomeWork(gradeBook.getHomeWork());
+
+        repository.save(gradeBookEntity);
+
+        return gradeBookEntity;
     }
 
     @Override

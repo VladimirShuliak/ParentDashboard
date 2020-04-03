@@ -11,11 +11,11 @@ public interface UserService {
 
     public List<UserEntity> findAll();
 
-    public UserEntity load(Long userId);
+    public UserEntity load(String userId);
 
     public UserEntity save(UserEntity user, List<RoleName> roleNames);
 
     public UserEntity update(UserEntity user);
 
-    public void remove(Long id);
+    public void remove(String id);
 }

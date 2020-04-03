@@ -18,12 +18,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="roles")
+@Table(name = "roles")
 public class RoleEntity {
 
     @Id
-    @GeneratedValue(generator="system-uuid", strategy = GenerationType.AUTO)
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
+//    @GeneratedValue(generator = "system-uuid", strategy = GenerationType.AUTO)
+//    @GenericGenerator(name = "system-uuid", strategy = "uuid")
     private String Id;
 
 

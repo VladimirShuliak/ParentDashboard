@@ -21,12 +21,10 @@ public class CustomUserPrincipal implements UserDetails {
         this.user = user;
     }
 
-
     @Override
     public String getUsername() {
         return user.getName();
     }
-
 
     @Override
     public String getPassword() {

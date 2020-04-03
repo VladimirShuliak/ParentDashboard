@@ -21,7 +21,7 @@ public class UserEntity {
     @GeneratedValue(generator="system-uuid", strategy = GenerationType.AUTO)
     @GenericGenerator(name="system-uuid", strategy = "uuid")
     @Column(name = "id")
-    private Long id;
+    private String id;
 
     @Column(name="name")
     private String name;
@@ -38,15 +38,9 @@ public class UserEntity {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "isStudent")
-    private boolean isStudent;
-
-    @Column(name = "isParent")
-    private boolean isParent;
-
-    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "id"),
+            name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<RoleEntity> roles;
 
@@ -54,15 +48,15 @@ public class UserEntity {
     @JoinColumn(name = "gradebook_id", referencedColumnName = "id")
     private GradeBookEntity gradebook;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_courses", joinColumns = @JoinColumn(
             name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "couse_id", referencedColumnName = "id"))
     private List<CourseEntity> courses;
 
     @ManyToOne
-    @JoinColumn(name="homework_id", nullable=false)
+    @JoinColumn(name = "homework_id", nullable = false)
     private HomeWorkEntity homeWork;
-    
+
 }
 

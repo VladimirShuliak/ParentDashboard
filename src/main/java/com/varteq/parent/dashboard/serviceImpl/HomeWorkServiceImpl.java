@@ -1,6 +1,5 @@
 package com.varteq.parent.dashboard.serviceImpl;
 
-import com.varteq.parent.dashboard.model.CourseEntity;
 import com.varteq.parent.dashboard.model.HomeWorkEntity;
 import com.varteq.parent.dashboard.repo.HomeWorkRepository;
 import com.varteq.parent.dashboard.service.HomeWorkService;
@@ -39,17 +38,22 @@ public class HomeWorkServiceImpl implements HomeWorkService {
     public HomeWorkEntity save(HomeWorkEntity homeWork) {
         Long homeWorkId = homeWork.getId();
         log.debug("Save add home work {}", homeWorkId);
-        Optional<HomeWorkEntity> homeWorkEntity = repository.findById(homeWorkId);
         if (homeWork.getId() != null && repository.existsById(homeWorkId)) {
             throw new EntityExistsException("Failed to save, course already exists, id:" + homeWork.getId());
         }
 
-        homeWorkEntity.get().setDescription(homeWork.getDescription());
-        homeWorkEntity.get().setUsers(homeWork.getUsers());
-        homeWorkEntity.get().setCourses(homeWork.getCourses());
-        homeWorkEntity.get().setGradeBooks(homeWork.getGradeBooks());
+        HomeWorkEntity homeWorkEntity = new HomeWorkEntity();
 
-        return homeWorkEntity.get();
+        homeWorkEntity.setId(homeWork.getId());
+        homeWorkEntity.setGrade(homeWork.getGrade());
+        homeWorkEntity.setDescription(homeWork.getDescription());
+        homeWorkEntity.setUsers(homeWork.getUsers());
+        homeWorkEntity.setCourses(homeWork.getCourses());
+        homeWorkEntity.setGradeBooks(homeWork.getGradeBooks());
+
+        repository.save(homeWorkEntity);
+
+        return homeWorkEntity;
     }
 
     @Override
@@ -57,18 +61,24 @@ public class HomeWorkServiceImpl implements HomeWorkService {
         Long homeWorkId = homeWork.getId();
         log.debug("Update home Work by id {}", homeWork.getId());
 
-        Optional<HomeWorkEntity> homeWorkEntity = repository.findById(homeWorkId);
+        Optional<HomeWorkEntity> homeWorkForId = repository.findById(homeWorkId);
 
-        if (homeWorkId == null || !homeWorkId.equals(homeWorkEntity.get().getId())) {
-            throw new EntityNotFoundException("Failed to update, course doesn't exist id:" + homeWorkId);
+        if (homeWorkId == null || !homeWorkId.equals(homeWorkForId.get().getId())) {
+            throw new EntityNotFoundException("Failed to update, home work doesn't exist id:" + homeWorkId);
         }
 
-        homeWorkEntity.get().setDescription(homeWork.getDescription());
-        homeWorkEntity.get().setUsers(homeWork.getUsers());
-        homeWorkEntity.get().setCourses(homeWork.getCourses());
-        homeWorkEntity.get().setGradeBooks(homeWork.getGradeBooks());
+        HomeWorkEntity homeWorkEntity = new HomeWorkEntity();
 
-        return homeWorkEntity.get();
+        homeWorkEntity.setId(homeWorkForId.get().getId());
+        homeWorkEntity.setGrade(homeWork.getGrade());
+        homeWorkEntity.setDescription(homeWork.getDescription());
+        homeWorkEntity.setUsers(homeWork.getUsers());
+        homeWorkEntity.setCourses(homeWork.getCourses());
+        homeWorkEntity.setGradeBooks(homeWork.getGradeBooks());
+
+        repository.save(homeWorkEntity);
+
+        return homeWorkEntity;
     }
 
     @Override
