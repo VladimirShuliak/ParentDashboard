@@ -1,18 +1,18 @@
 package com.varteq.parent.dashboard.service;
 
-import com.varteq.parent.dashboard.model.CourseEntity;
+import com.varteq.parent.dashboard.dto.CourseDto;
 
 import java.util.List;
 
 public interface CourseService {
 
-    public List<CourseEntity> findAll();
+    public List<CourseDto> findAll();
 
-    public CourseEntity load(Long courseId);
+    public CourseDto load(Long courseId);
 
-    public CourseEntity save(CourseEntity course);
+    public CourseDto save(CourseDto course);
 
-    public CourseEntity update(CourseEntity course);
+    public CourseDto update(CourseDto course);
 
     public void remove(Long journalId);
 }

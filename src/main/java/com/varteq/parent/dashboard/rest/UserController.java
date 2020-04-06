@@ -1,14 +1,17 @@
 package com.varteq.parent.dashboard.rest;
 
-import com.varteq.parent.dashboard.model.UserEntity;
+import com.varteq.parent.dashboard.dto.UserDto;
 import com.varteq.parent.dashboard.security.RoleName;
 import com.varteq.parent.dashboard.serviceImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.varteq.parent.dashboard.rest.HomeWorkController.ROLE_USER;
 
 @RestController
 @RequestMapping("/users")
@@ -17,32 +20,32 @@ public class UserController {
     @Autowired
     private UserServiceImpl userService;
 
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<UserEntity> getAll() {
+    @Secured(ROLE_USER)
+    public List<UserDto> getAll() {
 
         return userService.findAll();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{userId}")
-    public UserEntity getUser(@PathVariable String userId) {
+    public UserDto getUser(@PathVariable String userId) {
 
         return userService.load(userId);
     }
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public UserEntity saveUser(@Valid @RequestBody UserEntity user,
-                               @RequestParam(name = "roleNames", required = false) List<RoleName> roleNames) {
+    public UserDto saveUser(@Valid @RequestBody UserDto user,
+                            @RequestParam(name = "roleNames", required = false) List<RoleName> roleNames) {
 
-        return userService.save(user, roleNames);
+        return userService.save(user);
     }
 
     @PutMapping
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public UserEntity updateUser(@Valid @RequestBody UserEntity userToUpdate) {
+    public UserDto updateUser(@Valid @RequestBody UserDto userToUpdate) {
 
         return userService.update(userToUpdate);
     }

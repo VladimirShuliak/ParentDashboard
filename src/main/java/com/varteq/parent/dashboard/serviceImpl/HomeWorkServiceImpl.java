@@ -1,11 +1,15 @@
 package com.varteq.parent.dashboard.serviceImpl;
 
-import com.varteq.parent.dashboard.model.HomeWorkEntity;
+import com.varteq.parent.dashboard.dao.mapper.HomeWorkMapper;
+import com.varteq.parent.dashboard.dao.model.HomeWorkEntity;
+import com.varteq.parent.dashboard.dto.HomeWorkDto;
 import com.varteq.parent.dashboard.repo.HomeWorkRepository;
 import com.varteq.parent.dashboard.service.HomeWorkService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -19,45 +23,41 @@ public class HomeWorkServiceImpl implements HomeWorkService {
     @Autowired
     private HomeWorkRepository repository;
 
+    @Autowired
+    private HomeWorkMapper homeWorkMapper;
+
     @Override
-    public List<HomeWorkEntity> findAll() {
-        return repository.findAll();
+    @Secured({"ROLE_USER"})
+    public List<HomeWorkDto> findAll() {
+        return homeWorkMapper.toDtoList(repository.findAll());
     }
 
     @Override
-    public HomeWorkEntity load(Long homeWorkId) {
+    @Transactional(readOnly = true)
+    @Secured({"ROLE_ADMIN"})
+    public HomeWorkDto load(Long homeWorkId) {
         log.debug("Load homeWork by id {}", homeWorkId);
         Optional<HomeWorkEntity> homeWork = repository.findById(homeWorkId);
         if (homeWork == null) {
             throw new EntityNotFoundException("HomeWork doesn't exist, id " + homeWorkId);
         }
-        return homeWork.get();
+        return homeWorkMapper.toDto(homeWork.get());
     }
 
     @Override
-    public HomeWorkEntity save(HomeWorkEntity homeWork) {
+    public HomeWorkDto save(HomeWorkDto homeWork) {
         Long homeWorkId = homeWork.getId();
         log.debug("Save add home work {}", homeWorkId);
         if (homeWork.getId() != null && repository.existsById(homeWorkId)) {
             throw new EntityExistsException("Failed to save, course already exists, id:" + homeWork.getId());
         }
 
-        HomeWorkEntity homeWorkEntity = new HomeWorkEntity();
-
-        homeWorkEntity.setId(homeWork.getId());
-        homeWorkEntity.setGrade(homeWork.getGrade());
-        homeWorkEntity.setDescription(homeWork.getDescription());
-        homeWorkEntity.setUsers(homeWork.getUsers());
-        homeWorkEntity.setCourses(homeWork.getCourses());
-        homeWorkEntity.setGradeBooks(homeWork.getGradeBooks());
-
-        repository.save(homeWorkEntity);
-
-        return homeWorkEntity;
+        HomeWorkEntity homeWorkEntity = repository.save(homeWorkMapper.toEntity(homeWork));
+        return homeWorkMapper.toDto(homeWorkEntity);
     }
 
     @Override
-    public HomeWorkEntity update(HomeWorkEntity homeWork) {
+    public HomeWorkDto update(HomeWorkDto homeWork) {
         Long homeWorkId = homeWork.getId();
         log.debug("Update home Work by id {}", homeWork.getId());
 
@@ -67,23 +67,12 @@ public class HomeWorkServiceImpl implements HomeWorkService {
             throw new EntityNotFoundException("Failed to update, home work doesn't exist id:" + homeWorkId);
         }
 
-        HomeWorkEntity homeWorkEntity = new HomeWorkEntity();
-
-        homeWorkEntity.setId(homeWorkForId.get().getId());
-        homeWorkEntity.setGrade(homeWork.getGrade());
-        homeWorkEntity.setDescription(homeWork.getDescription());
-        homeWorkEntity.setUsers(homeWork.getUsers());
-        homeWorkEntity.setCourses(homeWork.getCourses());
-        homeWorkEntity.setGradeBooks(homeWork.getGradeBooks());
-
-        repository.save(homeWorkEntity);
-
-        return homeWorkEntity;
+        HomeWorkEntity homeWorkEntity = repository.save(homeWorkMapper.toEntity(homeWork));
+        return homeWorkMapper.toDto(homeWorkEntity);
     }
 
     @Override
     public void remove(Long homeWorkId) {
-
         log.debug("Remove home work by id {}", homeWorkId);
         repository.deleteById(homeWorkId);
     }

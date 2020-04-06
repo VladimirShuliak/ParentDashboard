@@ -1,7 +1,7 @@
 package com.varteq.parent.dashboard.rest;
 
 
-import com.varteq.parent.dashboard.model.GradeBookEntity;
+import com.varteq.parent.dashboard.dto.GradeBookDto;
 import com.varteq.parent.dashboard.serviceImpl.GradeBookServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,25 +18,25 @@ public class GradeBookController {
     private GradeBookServiceImpl gradeBookService;
 
     @GetMapping
-    public List<GradeBookEntity> getAll() {
+    public List<GradeBookDto> getAll() {
         return gradeBookService.findAll();
     }
 
     @GetMapping(value = "/{gradeBookId}")
-    public GradeBookEntity getGradeBooks(@PathVariable Long gradeBookId) {
+    public GradeBookDto getGradeBooks(@PathVariable Long gradeBookId) {
 
         return gradeBookService.load(gradeBookId);
     }
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public GradeBookEntity save(@Valid @RequestBody GradeBookEntity gradeBook) {
+    public GradeBookDto save(@Valid @RequestBody GradeBookDto gradeBook) {
 
         return gradeBookService.save(gradeBook);
     }
 
     @PutMapping
-    public GradeBookEntity update(@Valid @RequestBody GradeBookEntity gradeBookToUpdate) {
+    public GradeBookDto update(@Valid @RequestBody GradeBookDto gradeBookToUpdate) {
 
         return gradeBookService.update(gradeBookToUpdate);
     }

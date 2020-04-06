@@ -1,18 +1,18 @@
 package com.varteq.parent.dashboard.service;
 
-import com.varteq.parent.dashboard.model.GradeBookEntity;
+import com.varteq.parent.dashboard.dto.GradeBookDto;
 
 import java.util.List;
 
 public interface GradeBookService {
 
-    public List<GradeBookEntity> findAll();
+    public List<GradeBookDto> findAll();
 
-    public GradeBookEntity load(Long journalId);
+    public GradeBookDto load(Long id);
 
-    public GradeBookEntity save(GradeBookEntity user);
+    public GradeBookDto save(GradeBookDto user);
 
-    public GradeBookEntity update(GradeBookEntity user);
+    public GradeBookDto update(GradeBookDto user);
 
-    public void remove(Long journalId);
+    public void remove(Long Id);
 }

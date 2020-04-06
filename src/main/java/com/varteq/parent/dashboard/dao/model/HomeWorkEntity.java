@@ -1,13 +1,9 @@
-package com.varteq.parent.dashboard.model;
+package com.varteq.parent.dashboard.dao.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -23,20 +19,21 @@ public class HomeWorkEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name="description")
+    @Column(name = "description")
     private String description;
 
-    @Column(name="grade")
+    @Column(name = "grade")
     private int grade;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "homeWork", fetch = FetchType.LAZY)
     private List<UserEntity> users;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "homeWork", fetch = FetchType.LAZY)
     private List<CourseEntity> courses;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "homeWork", fetch = FetchType.LAZY)
     private List<GradeBookEntity> gradeBooks;
-
-
 }

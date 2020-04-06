@@ -1,6 +1,7 @@
-package com.varteq.parent.dashboard.model;
+package com.varteq.parent.dashboard.dao.model;
 
 import lombok.*;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,23 +21,26 @@ public class CourseEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name="name")
+    @Column(name = "name")
     private String name;
 
-    @Column(name="courseStart")
+    @Column(name = "courseStart")
     private LocalDateTime start;
 
     @Column(name = "courseEnd")
     private LocalDateTime end;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
     private List<UserEntity> users;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "courses", fetch = FetchType.LAZY)
     private List<GradeBookEntity> gradeBooks;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="homework_id", nullable=false)
+    @JoinColumn(name = "homework_id", nullable = false)
     private HomeWorkEntity homeWork;
 
 }

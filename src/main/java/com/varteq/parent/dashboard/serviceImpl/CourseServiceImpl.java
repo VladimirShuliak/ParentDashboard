@@ -1,6 +1,8 @@
 package com.varteq.parent.dashboard.serviceImpl;
 
-import com.varteq.parent.dashboard.model.CourseEntity;
+import com.varteq.parent.dashboard.dao.mapper.CourseEntityMapper;
+import com.varteq.parent.dashboard.dao.model.CourseEntity;
+import com.varteq.parent.dashboard.dto.CourseDto;
 import com.varteq.parent.dashboard.repo.CourseRepository;
 import com.varteq.parent.dashboard.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,47 +21,38 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseRepository repository;
 
+    @Autowired
+    private CourseEntityMapper courseEntityMapper;
+
     @Override
-    public List<CourseEntity> findAll() {
-        return repository.findAll();
+    public List<CourseDto> findAll() {
+        return courseEntityMapper.toDtoList(repository.findAll());
     }
 
     @Override
-    public CourseEntity load(Long courseId) {
+    public CourseDto load(Long courseId) {
         log.debug("Load course by id {}", courseId);
         Optional<CourseEntity> couse = repository.findById(courseId);
         if (couse == null) {
             throw new EntityNotFoundException("Course doesn't exist, id " + courseId);
         }
-        return couse.get();
+        return courseEntityMapper.toDto(couse.get());
     }
 
     @Override
-    public CourseEntity save(CourseEntity course) {
+    public CourseDto save(CourseDto course) {
         Long courseId = course.getId();
         log.debug("Save user {}", courseId);
-
         if (course.getId() != null && repository.existsById(courseId)) {
             throw new EntityExistsException("Failed to save, course already exists, id:" + course.getId());
         }
 
-        CourseEntity courseEntity = new CourseEntity();
-
-        courseEntity.setId(course.getId());
-        courseEntity.setName(course.getName());
-        courseEntity.setStart(course.getStart());
-        courseEntity.setEnd(course.getEnd());
-        courseEntity.setUsers(course.getUsers());
-        courseEntity.setGradeBooks(course.getGradeBooks());
-        courseEntity.setHomeWork(course.getHomeWork());
-
-        repository.save(courseEntity);
-
-        return courseEntity;
+        CourseEntity courseEntity = repository.save(courseEntityMapper.toEntity(course));
+        return courseEntityMapper.toDto(courseEntity);
     }
 
     @Override
-    public CourseEntity update(CourseEntity course) {
+    public CourseDto update(CourseDto course) {
         Long courseId = course.getId();
         log.debug("Update course by id {}", course.getId());
 
@@ -69,19 +62,8 @@ public class CourseServiceImpl implements CourseService {
             throw new EntityNotFoundException("Failed to update, course doesn't exist id:" + courseId);
         }
 
-        CourseEntity courseEntity = new CourseEntity();
-
-        courseEntity.setId(courseEntityForId.get().getId());
-        courseEntity.setName(course.getName());
-        courseEntity.setStart(course.getStart());
-        courseEntity.setEnd(course.getEnd());
-        courseEntity.setUsers(course.getUsers());
-        courseEntity.setGradeBooks(course.getGradeBooks());
-        courseEntity.setHomeWork(course.getHomeWork());
-
-        repository.save(courseEntity);
-
-        return courseEntity;
+        CourseEntity courseEntity = repository.save(courseEntityMapper.toEntity(course));
+        return courseEntityMapper.toDto(courseEntity);
     }
 
     @Override

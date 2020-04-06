@@ -1,7 +1,8 @@
 package com.varteq.parent.dashboard.service;
 
-import com.varteq.parent.dashboard.model.UserEntity;
-import com.varteq.parent.dashboard.security.RoleName;
+//import com.varteq.parent.dashboard.dao.model.UserEntity;
+
+import com.varteq.parent.dashboard.dto.UserDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,13 +10,15 @@ import java.util.List;
 @Service
 public interface UserService {
 
-    public List<UserEntity> findAll();
+    public List<UserDto> findAll();
 
-    public UserEntity load(String userId);
+    public UserDto findByEmail(String email);
 
-    public UserEntity save(UserEntity user, List<RoleName> roleNames);
+    public UserDto load(String userId);
 
-    public UserEntity update(UserEntity user);
+    public UserDto save(UserDto user);
+
+    public UserDto update(UserDto user);
 
     public void remove(String id);
 }

@@ -1,6 +1,6 @@
 package com.varteq.parent.dashboard.rest;
 
-import com.varteq.parent.dashboard.model.CourseEntity;
+import com.varteq.parent.dashboard.dto.CourseDto;
 import com.varteq.parent.dashboard.serviceImpl.CourseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,26 +18,26 @@ public class CourseController {
 
 
     @GetMapping
-    public List<CourseEntity> getAll() {
+    public List<CourseDto> getAll() {
 
         return courseService.findAll();
     }
 
     @GetMapping(value = "/{courseId}")
-    public CourseEntity getUser(@PathVariable Long userId) {
+    public CourseDto getUser(@PathVariable Long userId) {
 
         return courseService.load(userId);
     }
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public CourseEntity save(@Valid @RequestBody CourseEntity course) {
+    public CourseDto save(@Valid @RequestBody CourseDto course) {
 
         return courseService.save(course);
     }
 
     @PutMapping
-    public CourseEntity updateUser(@Valid @RequestBody CourseEntity courseToUpdate) {
+    public CourseDto updateUser(@Valid @RequestBody CourseDto courseToUpdate) {
 
         return courseService.update(courseToUpdate);
     }

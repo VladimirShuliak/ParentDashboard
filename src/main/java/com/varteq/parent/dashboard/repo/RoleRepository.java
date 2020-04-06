@@ -1,15 +1,14 @@
 package com.varteq.parent.dashboard.repo;
 
-import com.varteq.parent.dashboard.model.RoleEntity;
+import com.varteq.parent.dashboard.dao.model.Role;
 import com.varteq.parent.dashboard.security.RoleName;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Set;
 
-public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    RoleEntity findByName(RoleName name);
+    Role findByName(RoleName name);
 
-    Set<RoleEntity> findByNameIn(List<RoleName> roleNames);
+    Set<Role> findByNameIn(Set<Role> roleNames);
 }

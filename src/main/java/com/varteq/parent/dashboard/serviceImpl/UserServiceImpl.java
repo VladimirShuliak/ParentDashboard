@@ -1,15 +1,20 @@
 package com.varteq.parent.dashboard.serviceImpl;
 
-import com.varteq.parent.dashboard.model.HomeWorkEntity;
-import com.varteq.parent.dashboard.model.RoleEntity;
-import com.varteq.parent.dashboard.model.UserEntity;
-import com.varteq.parent.dashboard.repo.HomeWorkRepository;
+import com.varteq.parent.dashboard.dao.mapper.UserEntityMapper;
+import com.varteq.parent.dashboard.dao.model.Role;
+import com.varteq.parent.dashboard.dao.model.UserEntity;
+import com.varteq.parent.dashboard.dto.UserDto;
 import com.varteq.parent.dashboard.repo.RoleRepository;
 import com.varteq.parent.dashboard.repo.UserRepository;
 import com.varteq.parent.dashboard.security.RoleName;
 import com.varteq.parent.dashboard.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
@@ -17,66 +22,86 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Slf4j
-@Service
-public class UserServiceImpl implements UserService {
+@Transactional
+@Service(value = "userService")
+public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
+    private UserEntityMapper userEntityMapper;
+
+    @Autowired
     private UserRepository repository;
 
+
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+
+        UserDto user = userEntityMapper.toDto(repository.findByName(name));
+        if (user == null) {
+            log.error("Invalid username or password.");
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+        Set grantedAuthorities = getAuthorities(user);
+        return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), grantedAuthorities);
+    }
+
+    private Set<GrantedAuthority> getAuthorities(UserDto user) {
+        Set<Role> roleByUserId = user.getRoles();
+        final Set<GrantedAuthority> authorities = roleByUserId.stream().map(role -> new SimpleGrantedAuthority(role.getName().toString().toUpperCase())).collect(Collectors.toSet());
+        return authorities;
+    }
+
     @Override
-    public List<UserEntity> findAll() {
-        return repository.findAll();
+    public List<UserDto> findAll() {
+        return userEntityMapper.toDtoList(repository.findAll());
+    }
+
+    @Override
+    public UserDto findByEmail(String email) {
+        log.debug("Load user by email {}", email);
+        UserEntity user = repository.findByEmail(email);
+        if (user == null) {
+            throw new EntityNotFoundException("User doesn't exist, email " + email);
+        }
+        return userEntityMapper.toDto(user);
     }
 
     @Autowired
     private RoleRepository roleRepository;
 
     @Override
-    public UserEntity load(String userId) {
+    public UserDto load(String userId) {
         log.debug("Load user by id {}", userId);
         Optional<UserEntity> user = repository.findById(userId);
         if (user == null) {
             throw new EntityNotFoundException("User doesn't exist, id " + userId);
         }
-        return user.get();
+        return userEntityMapper.toDto(user.get());
     }
 
     @Override
-    public UserEntity save(UserEntity user, List<RoleName> roleNames) {
+    public UserDto save(UserDto user) {
         log.debug("Save user {}", user);
         if (user.getId() != null && repository.existsById(user.getId())) {
             throw new EntityExistsException("Failed to save, user already exists, id:" + user.getId());
         }
 
-        UserEntity userEntity = new UserEntity();
-
-        userEntity.setId(user.getId());
-        userEntity.setName(user.getName());
-        userEntity.setSurname(user.getSurname());
-        userEntity.setEmail(user.getEmail());
-        userEntity.setVisit(java.time.LocalDateTime.now());
-        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
-        userEntity.setRoles(getAvailableRoleEntity(roleNames));
-        userEntity.setGradebook(user.getGradebook());
-        userEntity.setCourses(user.getCourses());
-        userEntity.setHomeWork(user.getHomeWork());
-
-        repository.save(userEntity);
-
-        return userEntity;
+        UserEntity userEntity = repository.save(userEntityMapper.toEntity(user));
+        return userEntityMapper.toDto(userEntity);
     }
 
     @Override
-    public UserEntity update(UserEntity user) {
+    public UserDto update(UserDto user) {
         String userId = user.getId();
         log.debug("Update user by id {}", userId);
 
@@ -87,21 +112,8 @@ public class UserServiceImpl implements UserService {
         }
 
         UserEntity userEntity = new UserEntity();
-
-        userEntity.setId(userEntityForId.get().getId());
-        userEntity.setName(user.getName());
-        userEntity.setSurname(user.getSurname());
-        userEntity.setEmail(user.getEmail());
-        userEntity.setVisit(java.time.LocalDateTime.now());
-        userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
-        userEntity.setRoles(user.getRoles());
-        userEntity.setGradebook(user.getGradebook());
-        userEntity.setCourses(user.getCourses());
-        userEntity.setHomeWork(user.getHomeWork());
-
-        repository.save(userEntity);
-
-        return userEntity;
+        repository.save(userEntityMapper.toEntity(user));
+        return userEntityMapper.toDto(userEntity);
     }
 
     @Override
@@ -110,18 +122,18 @@ public class UserServiceImpl implements UserService {
         repository.deleteById(userId);
     }
 
-    private Set<RoleEntity> getAvailableRoleEntity(List<RoleName> roleNames) {
-        Set<RoleEntity> roleEntity;
+    private Set<Role> getAvailableRoleEntity(Set<Role> roleNames) {
+        Set<Role> roleTypeEntity;
 
         if (roleNames != null && !roleNames.isEmpty()) {
-            roleEntity = roleRepository.findByNameIn(roleNames);
+            roleTypeEntity = roleRepository.findByNameIn(roleNames);
         } else {
-            roleEntity = Collections.singleton(roleRepository.findByName(RoleName.ROLE_USER));
+            roleTypeEntity = Collections.singleton(roleRepository.findByName(RoleName.ROLE_USER));
         }
 
-        if (roleEntity.isEmpty()) {
+        if (roleTypeEntity.isEmpty()) {
             throw new InvalidRequestException(String.format("Cannot create user for such roles: %s", roleNames));
         }
-        return roleEntity;
+        return roleTypeEntity;
     }
 }

@@ -1,28 +1,24 @@
-Spring Boot + Spring Security + OAuth2
+   **<h1>Spring Boot + Spring Security + OAuth2<h1>**
 
-    Example Spring Boot + Hibernate + Spring Security + OAuth2 project for demonstration purposes.
-
-    Getting started
+ <h2>Example Spring Boot + Hibernate + Spring Security + OAuth2 project for demonstration purposes<h2>
+ 
+  <h3>Prequirements:<h3>
    
-    Prerequirements
-   
-        - Install JDK 8+
-        - Gradle
-        - PostgreSQL 9.3 +
-        - lombok
+  <h5>- Install JDK 8+ <h5>
+  <h5>- Gradle <h5> 
         
- 
- 
- 
-            Oath2
-   
-    Login into Google Developer Console with with google
+   **<h2>OAuth2 Authorization:<h2>**
+       
+  <h5>- go to https://console.cloud.google.com/ and login with Google account <h5>
+  <h5>- generate new token<h5>
     
-    - go to https://console.cloud.google.com/ 
-    - generate new token
-    
-    update application.properties:
-    
-    - set new Client ID for 'security.oauth2.client.clientId' 
-    - set new Clinet Secret for 'BsF2pfm5hdxV_ZFjxjZXVxsk'
+  <h4>Update application.properties:<h4>
+  <h5>- set new Client ID for 'security.oauth2.client.clientId' <h5> 
+  <h5>- set new Clinet Secret for 'BsF2pfm5hdxV_ZFjxjZXVxsk' <h5>
+  
+  **<h2>Database:<h2>**
+  <h5>- PostgreSQL  9.3 + <h5>
+  <h5>- DbName   - "dashboard" <h5>
+  <h5>- Username - "root" <h5> 
+  <h5>- Password - "root" <h5> 
     

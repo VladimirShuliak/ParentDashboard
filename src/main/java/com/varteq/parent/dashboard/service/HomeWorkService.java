@@ -1,19 +1,19 @@
 package com.varteq.parent.dashboard.service;
 
 
-import com.varteq.parent.dashboard.model.HomeWorkEntity;
+import com.varteq.parent.dashboard.dto.HomeWorkDto;
 
 import java.util.List;
 
 public interface HomeWorkService {
 
-    public List<HomeWorkEntity> findAll();
+    public List<HomeWorkDto> findAll();
 
-    public HomeWorkEntity load(Long homeWorkId);
+    public HomeWorkDto load(Long homeWorkId);
 
-    public HomeWorkEntity save(HomeWorkEntity homeWork);
+    public HomeWorkDto save(HomeWorkDto homeWork);
 
-    public HomeWorkEntity update(HomeWorkEntity homeWork);
+    public HomeWorkDto update(HomeWorkDto homeWork);
 
     public void remove(Long homeWorkId);
 }

@@ -1,8 +1,7 @@
-package com.varteq.parent.dashboard.model;
+package com.varteq.parent.dashboard.dao.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -30,15 +29,18 @@ public class GradeBookEntity {
     @Column(name = "dateTo")
     private LocalDateTime dateTo;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "gradebook")
     private UserEntity user;
 
+    @JsonIgnore
     @ManyToMany
-    @JoinTable(name = "gradebooks_cousrses", joinColumns = {@JoinColumn(name="gradebook_id", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name="course_id", referencedColumnName = "id")})
+    @JoinTable(name = "gradebooks_cousrses", joinColumns = {@JoinColumn(name = "gradebook_id", referencedColumnName = "id")}, inverseJoinColumns = {@JoinColumn(name = "course_id", referencedColumnName = "id")})
     private List<CourseEntity> courses;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="homework_id", nullable=false)
+    @JoinColumn(name = "homework_id", nullable = false)
     private HomeWorkEntity homeWork;
 
 }
