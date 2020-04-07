@@ -16,7 +16,6 @@ public class CourseController {
     @Autowired
     private CourseServiceImpl courseService;
 
-
     @GetMapping
     public List<CourseDto> getAll() {
 
@@ -24,9 +23,9 @@ public class CourseController {
     }
 
     @GetMapping(value = "/{courseId}")
-    public CourseDto getUser(@PathVariable Long userId) {
+    public CourseDto getCourse(@PathVariable Long courseId) {
 
-        return courseService.load(userId);
+        return courseService.load(courseId);
     }
 
     @PostMapping

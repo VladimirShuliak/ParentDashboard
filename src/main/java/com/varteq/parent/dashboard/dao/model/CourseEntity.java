@@ -17,7 +17,6 @@ import java.util.List;
 public class CourseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
 
@@ -39,8 +38,8 @@ public class CourseEntity {
     private List<GradeBookEntity> gradeBooks;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "homework_id", nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "homework_id", nullable = true)
     private HomeWorkEntity homeWork;
 
 }

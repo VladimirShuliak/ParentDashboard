@@ -39,8 +39,8 @@ public class GradeBookEntity {
     private List<CourseEntity> courses;
 
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "homework_id", nullable = false)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "homework_id", nullable = true)
     private HomeWorkEntity homeWork;
 
 }

@@ -33,7 +33,7 @@ public class HomeWorkMapper extends EntityMapper<HomeWorkEntity, HomeWorkDto> {
                 .id(homeWorkDto.getId())
                 .description(homeWorkDto.getDescription())
                 .grade(homeWorkDto.getGrade())
-                .users(userEntityMapper.toEntityList(homeWorkDto.getUsers()))
+//                .users(userEntityMapper.toEntityList(homeWorkDto.getUsers()))
                 .courses(courseEntityMapper.toEntityList(homeWorkDto.getCourses()))
                 .gradeBooks(gradeBookMapper.toEntityList(homeWorkDto.getGradeBooks()))
                 .build();

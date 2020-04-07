@@ -2,12 +2,11 @@ package com.varteq.parent.dashboard.serviceImpl;
 
 import com.varteq.parent.dashboard.dao.mapper.HomeWorkMapper;
 import com.varteq.parent.dashboard.dao.model.HomeWorkEntity;
+import com.varteq.parent.dashboard.dao.repo.HomeWorkRepository;
 import com.varteq.parent.dashboard.dto.HomeWorkDto;
-import com.varteq.parent.dashboard.repo.HomeWorkRepository;
 import com.varteq.parent.dashboard.service.HomeWorkService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,14 +26,14 @@ public class HomeWorkServiceImpl implements HomeWorkService {
     private HomeWorkMapper homeWorkMapper;
 
     @Override
-    @Secured({"ROLE_USER"})
+//    @Secured({"ROLE_USER"})
     public List<HomeWorkDto> findAll() {
         return homeWorkMapper.toDtoList(repository.findAll());
     }
 
     @Override
     @Transactional(readOnly = true)
-    @Secured({"ROLE_ADMIN"})
+//    @Secured({"ROLE_ADMIN"})
     public HomeWorkDto load(Long homeWorkId) {
         log.debug("Load homeWork by id {}", homeWorkId);
         Optional<HomeWorkEntity> homeWork = repository.findById(homeWorkId);

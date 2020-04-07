@@ -25,9 +25,9 @@ public class HomeWorkEntity {
     @Column(name = "grade")
     private int grade;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "homeWork", fetch = FetchType.LAZY)
-    private List<UserEntity> users;
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "homeWork", fetch = FetchType.LAZY)
+//    private List<UserEntity> users;
 
     @JsonIgnore
     @OneToMany(mappedBy = "homeWork", fetch = FetchType.LAZY)

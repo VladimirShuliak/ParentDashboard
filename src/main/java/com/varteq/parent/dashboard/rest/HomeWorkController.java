@@ -26,7 +26,7 @@ public class HomeWorkController {
     @Autowired
     private HomeWorkServiceImpl homeWorkService;
 
-    @Secured({ROLE_USER})
+//    @Secured({ROLE_USER})
     @GetMapping
     public List<HomeWorkDto> getAll() {
         return homeWorkService.findAll();
@@ -39,7 +39,7 @@ public class HomeWorkController {
         return homeWorkService.load(homeWorkId);
     }
 
-    @Secured({ROLE_ADMIN})
+//    @Secured({ROLE_ADMIN})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(value = HttpStatus.CREATED)
     public HomeWorkDto save(@Valid @RequestBody HomeWorkDto homeWork) {
@@ -47,17 +47,17 @@ public class HomeWorkController {
         return homeWorkService.save(homeWork);
     }
 
-    @Secured({ROLE_ADMIN})
+//    @Secured({ROLE_ADMIN})
     @PutMapping
     public HomeWorkDto update(@Valid @RequestBody HomeWorkDto homeWorkToUpdate) {
 
         return homeWorkService.update(homeWorkToUpdate);
     }
 
-    @Secured({ROLE_ADMIN})
+//    @Secured({ROLE_ADMIN})
     @DeleteMapping(value = "/{homeWorkId}")
-    public void deleteHomeWork(@PathVariable Long gradeBookId) {
+    public void deleteHomeWork(@PathVariable Long homeWorkId) {
 
-        homeWorkService.remove(gradeBookId);
+        homeWorkService.remove(homeWorkId);
     }
 }

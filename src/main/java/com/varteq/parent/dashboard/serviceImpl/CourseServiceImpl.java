@@ -3,7 +3,7 @@ package com.varteq.parent.dashboard.serviceImpl;
 import com.varteq.parent.dashboard.dao.mapper.CourseEntityMapper;
 import com.varteq.parent.dashboard.dao.model.CourseEntity;
 import com.varteq.parent.dashboard.dto.CourseDto;
-import com.varteq.parent.dashboard.repo.CourseRepository;
+import com.varteq.parent.dashboard.dao.repo.CourseRepository;
 import com.varteq.parent.dashboard.service.CourseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

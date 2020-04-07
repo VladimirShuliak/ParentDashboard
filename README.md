@@ -14,7 +14,7 @@
     
   <h4>Update application.properties:<h4>
   <h5>- set new Client ID for 'security.oauth2.client.clientId' <h5> 
-  <h5>- set new Clinet Secret for 'BsF2pfm5hdxV_ZFjxjZXVxsk' <h5>
+  <h5>- set new Clinet Secret  <h5>
   
   **<h2>Database:<h2>**
   <h5>- PostgreSQL  9.3 + <h5>

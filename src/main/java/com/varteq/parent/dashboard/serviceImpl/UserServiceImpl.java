@@ -1,11 +1,15 @@
 package com.varteq.parent.dashboard.serviceImpl;
 
+import com.varteq.parent.dashboard.dao.mapper.StudentMapper;
+import com.varteq.parent.dashboard.dao.mapper.UserDtoToStudentService;
 import com.varteq.parent.dashboard.dao.mapper.UserEntityMapper;
 import com.varteq.parent.dashboard.dao.model.Role;
 import com.varteq.parent.dashboard.dao.model.UserEntity;
+import com.varteq.parent.dashboard.dao.repo.ParentRepository;
+import com.varteq.parent.dashboard.dao.repo.RoleRepository;
+import com.varteq.parent.dashboard.dao.repo.StudentRepository;
+import com.varteq.parent.dashboard.dao.repo.UserRepository;
 import com.varteq.parent.dashboard.dto.UserDto;
-import com.varteq.parent.dashboard.repo.RoleRepository;
-import com.varteq.parent.dashboard.repo.UserRepository;
 import com.varteq.parent.dashboard.security.RoleName;
 import com.varteq.parent.dashboard.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +45,19 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private UserEntityMapper userEntityMapper;
 
     @Autowired
+    private StudentMapper studentMapper;
+
+    @Autowired
+    UserDtoToStudentService userDtoToStudentService;
+
+    @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private ParentRepository parentRepository;
 
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
 
@@ -95,8 +110,12 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         if (user.getId() != null && repository.existsById(user.getId())) {
             throw new EntityExistsException("Failed to save, user already exists, id:" + user.getId());
         }
-
         UserEntity userEntity = repository.save(userEntityMapper.toEntity(user));
+
+        if (user.isStudentInd()) {
+            studentRepository.save(userDtoToStudentService.toEntity(user));
+        }
+
         return userEntityMapper.toDto(userEntity);
     }
 
@@ -104,22 +123,28 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public UserDto update(UserDto user) {
         String userId = user.getId();
         log.debug("Update user by id {}", userId);
+        Optional<UserEntity> userEntity = repository.findById(userId);
 
-        Optional<UserEntity> userEntityForId = repository.findById(userId);
-
-        if (userId == null || !userId.equals(userEntityForId.get().getId())) {
+        if (userId == null || userEntity == null) {
             throw new EntityNotFoundException("Failed to update, user doesn't exist id:" + userId);
         }
 
-        UserEntity userEntity = new UserEntity();
+        if (user.isStudentInd()) {
+            studentRepository.save(userDtoToStudentService.toEntity(user));
+        }
+
         repository.save(userEntityMapper.toEntity(user));
-        return userEntityMapper.toDto(userEntity);
+        return user;
     }
 
     @Override
     public void remove(String userId) {
         log.debug("Remove user by id {}", userId);
         repository.deleteById(userId);
+
+//        if (user.isStudentInd()) {
+//            studentRepository.save(userDtoToStudentService.toEntity(user));
+//        }
     }
 
     private Set<Role> getAvailableRoleEntity(Set<Role> roleNames) {

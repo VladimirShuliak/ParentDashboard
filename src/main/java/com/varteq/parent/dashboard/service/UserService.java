@@ -1,6 +1,5 @@
 package com.varteq.parent.dashboard.service;
 
-//import com.varteq.parent.dashboard.dao.model.UserEntity;
 
 import com.varteq.parent.dashboard.dto.UserDto;
 import org.springframework.stereotype.Service;

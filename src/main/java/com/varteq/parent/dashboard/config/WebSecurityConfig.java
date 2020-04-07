@@ -3,9 +3,10 @@ package com.varteq.parent.dashboard.config;
 import com.varteq.parent.dashboard.dao.model.GradeBookEntity;
 import com.varteq.parent.dashboard.dao.model.HomeWorkEntity;
 import com.varteq.parent.dashboard.dao.model.UserEntity;
-import com.varteq.parent.dashboard.repo.GradeBookRepository;
-import com.varteq.parent.dashboard.repo.HomeWorkRepository;
-import com.varteq.parent.dashboard.repo.UserRepository;
+import com.varteq.parent.dashboard.dao.repo.GradeBookRepository;
+import com.varteq.parent.dashboard.dao.repo.HomeWorkRepository;
+import com.varteq.parent.dashboard.dao.repo.StudentRepository;
+import com.varteq.parent.dashboard.dao.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
@@ -32,6 +33,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     GradeBookRepository gradeBookRepository;
 
+    @Autowired
+    StudentRepository studentRepository;
+
     @Bean
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
@@ -43,9 +47,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .mvcMatchers("/login**")
                 .permitAll()
-                .mvcMatchers("/users/**", "/courses/**")
-                .authenticated()
-                // logoutSuccessful
+//                .mvcMatchers("/users/**", "/courses/**")
+//                .authenticated()
+//                 logoutSuccessful
                 .and().logout().permitAll()
                 .and().csrf().disable();
 
@@ -79,10 +83,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 homeWorkEntity.setId(homeWorkEntityForOp.get().getId());
                 gradeBookEntity.setId(gradeBookEntityForOp.get().getId());
 
-                user.setHomeWork(homeWorkEntity);
+//                user.setHomeWork(homeWorkEntity);
                 user.setGradebook(gradeBookEntity);
                 user.setName((String) map.get("name"));
                 user.setEmail((String) map.get("email"));
+                user.setEmail((String) map.get("email"));
+                user.setStudentInd(true);
 
                 return userRepository.save(user);
             }

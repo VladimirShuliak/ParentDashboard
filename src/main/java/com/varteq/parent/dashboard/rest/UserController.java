@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @Secured(ROLE_USER)
+//    @Secured(ROLE_USER)
     public List<UserDto> getAll() {
 
         return userService.findAll();

@@ -1,4 +1,4 @@
-package com.varteq.parent.dashboard.repo;
+package com.varteq.parent.dashboard.dao.repo;
 
 import com.varteq.parent.dashboard.dao.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
