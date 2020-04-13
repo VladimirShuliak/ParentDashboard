@@ -1,14 +1,12 @@
 package com.varteq.parent.dashboard.dto;
 
 
-import com.varteq.parent.dashboard.dao.model.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -16,16 +14,16 @@ import java.util.Set;
 public class UserDto {
 
     private String id;
+
+    @Column(name = "name")
     private String name;
-    private String surname;
-    private String dob;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "visit")
     private LocalDateTime visit;
+
+    @Column(name = "password")
     private String password;
-    private boolean studentInd;
-    private boolean parentInd;
-    private Set<Role> roles;
-    private GradeBookDto gradebook;
-    private List<CourseDto> courses;
-    private HomeWorkDto homeWork;
 }

@@ -6,14 +6,14 @@ import com.varteq.parent.dashboard.serviceImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.varteq.parent.dashboard.rest.HomeWorkController.ROLE_USER;
-
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/users")
 public class UserController {
 
@@ -22,9 +22,9 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-//    @Secured(ROLE_USER)
+    @Secured("ROLE_ADMIN")
     public List<UserDto> getAll() {
-
+        SecurityContextHolder.getContext().getAuthentication();
         return userService.findAll();
     }
 

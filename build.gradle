@@ -31,10 +31,12 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-security')
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile("org.springframework.boot:spring-boot-starter-websocket")
+    compile("org.springframework.boot:spring-boot-starter-jersey")
     compile('org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure:2.1.0.RELEASE')
     compile(group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.9.RELEASE')
     compile('org.postgresql:postgresql')
     compileOnly 'org.projectlombok:lombok:1.18.8'
+    testCompile group: 'org.springframework.security', name: 'spring-security-aspects', version: '5.0.7.RELEASE'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
     compile('javax.xml.bind:jaxb-api')
     compile 'io.sentry:sentry-spring:1.7.16'

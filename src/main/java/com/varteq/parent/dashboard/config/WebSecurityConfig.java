@@ -1,12 +1,11 @@
 package com.varteq.parent.dashboard.config;
 
-import com.varteq.parent.dashboard.dao.model.GradeBookEntity;
-import com.varteq.parent.dashboard.dao.model.HomeWorkEntity;
 import com.varteq.parent.dashboard.dao.model.UserEntity;
 import com.varteq.parent.dashboard.dao.repo.GradeBookRepository;
 import com.varteq.parent.dashboard.dao.repo.HomeWorkRepository;
 import com.varteq.parent.dashboard.dao.repo.StudentRepository;
 import com.varteq.parent.dashboard.dao.repo.UserRepository;
+import com.varteq.parent.dashboard.serviceImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
@@ -16,10 +15,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
@@ -36,10 +36,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     StudentRepository studentRepository;
 
+    @Autowired
+    UserServiceImpl userService;
+
+    UserEntity userEntity;
+
     @Bean
     public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Autowired
+    AdminAuthFilter adminAuthFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,10 +55,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .mvcMatchers("/login**")
                 .permitAll()
-//                .mvcMatchers("/users/**", "/courses/**")
-//                .authenticated()
+                .mvcMatchers("/users/**", "/courses/**")
+                .authenticated()
 //                 logoutSuccessful
                 .and().logout().permitAll()
+                .and()
+                .addFilterBefore(adminAuthFilter, BasicAuthenticationFilter.class).authorizeRequests()
                 .and().csrf().disable();
 
     }
@@ -63,35 +73,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             UserEntity userEntity = userRepository.findByEmail(email);
 
             if (userEntity == null) {
-                HomeWorkEntity homeWorkEntity = new HomeWorkEntity();
-                homeWorkEntity.setId(10L);
-                homeWorkEntity.setGrade(1);
-                homeWorkEntity.setDescription("forTestAuth");
-                homeWorkRepository.save(homeWorkEntity);
-
-                GradeBookEntity gradeBookEntity = new GradeBookEntity();
-                gradeBookEntity.setId(10L);
-                gradeBookEntity.setHomeWork(homeWorkEntity);
-                gradeBookRepository.save(gradeBookEntity);
 
                 UserEntity user = new UserEntity();
                 user.setId(id);
 
-                Optional<HomeWorkEntity> homeWorkEntityForOp = homeWorkRepository.findById(homeWorkEntity.getId());
-                Optional<GradeBookEntity> gradeBookEntityForOp = gradeBookRepository.findById(gradeBookEntity.getId());
-
-                homeWorkEntity.setId(homeWorkEntityForOp.get().getId());
-                gradeBookEntity.setId(gradeBookEntityForOp.get().getId());
-
-//                user.setHomeWork(homeWorkEntity);
-                user.setGradebook(gradeBookEntity);
                 user.setName((String) map.get("name"));
                 user.setEmail((String) map.get("email"));
                 user.setEmail((String) map.get("email"));
-                user.setStudentInd(true);
 
                 return userRepository.save(user);
             }
+            UserEntity userEntityHol = (UserEntity) userService.loadUserByUsername(userEntity.getName());
+            SecurityContextHolder.getContext().setAuthentication(new UserAuthentication(userEntityHol));
 
             userEntity.setVisit(LocalDateTime.now());
             return userRepository.save(userEntity);

@@ -43,7 +43,6 @@ public class StudentMapper extends EntityMapper<StudentEntity, StudentDto> {
     protected StudentDto asDto(UserEntity userEntity) {
         return StudentDto.builder()
                 .name(userEntity.getName())
-                .dob(userEntity.getDob())
                 .email(userEntity.getEmail())
                 .build();
     }

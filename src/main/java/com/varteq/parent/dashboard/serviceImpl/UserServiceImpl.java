@@ -45,35 +45,34 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private UserEntityMapper userEntityMapper;
 
     @Autowired
-    private StudentMapper studentMapper;
-
-    @Autowired
     UserDtoToStudentService userDtoToStudentService;
 
     @Autowired
     private UserRepository repository;
 
-    @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
-    private ParentRepository parentRepository;
-
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
 
-        UserDto user = userEntityMapper.toDto(repository.findByName(name));
+        UserEntity user = repository.findByName(name);
+
         if (user == null) {
             log.error("Invalid username or password.");
             throw new UsernameNotFoundException("Invalid username or password.");
         }
-        Set grantedAuthorities = getAuthorities(user);
-        return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), grantedAuthorities);
-    }
 
-    private Set<GrantedAuthority> getAuthorities(UserDto user) {
-        Set<Role> roleByUserId = user.getRoles();
-        final Set<GrantedAuthority> authorities = roleByUserId.stream().map(role -> new SimpleGrantedAuthority(role.getName().toString().toUpperCase())).collect(Collectors.toSet());
-        return authorities;
+        return user;
+//        UserDto user = userEntityMapper.toDto(repository.findByName(name));
+//        if (user == null) {
+//            log.error("Invalid username or password.");
+//            throw new UsernameNotFoundException("Invalid username or password.");
+//        }
+//        Set grantedAuthorities = getAuthorities(user);
+//        return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), grantedAuthorities);
+//    }
+//
+//    private Set<GrantedAuthority> getAuthorities(UserDto user) {
+//        Set<Role> roleByUserId = user.getRoles();
+//        final Set<GrantedAuthority> authorities = roleByUserId.stream().map(role -> new SimpleGrantedAuthority(role.getName().toString().toUpperCase())).collect(Collectors.toSet());
+//        return authorities;
     }
 
     @Override
@@ -112,9 +111,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         }
         UserEntity userEntity = repository.save(userEntityMapper.toEntity(user));
 
-        if (user.isStudentInd()) {
-            studentRepository.save(userDtoToStudentService.toEntity(user));
-        }
+//        if (user.isStudentInd()) {
+//            studentRepository.save(userDtoToStudentService.toEntity(user));
+//        }
 
         return userEntityMapper.toDto(userEntity);
     }
@@ -129,9 +128,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
             throw new EntityNotFoundException("Failed to update, user doesn't exist id:" + userId);
         }
 
-        if (user.isStudentInd()) {
-            studentRepository.save(userDtoToStudentService.toEntity(user));
-        }
+//        if (user.isStudentInd()) {
+//            studentRepository.save(userDtoToStudentService.toEntity(user));
+//        }
 
         repository.save(userEntityMapper.toEntity(user));
         return user;

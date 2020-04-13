@@ -19,7 +19,6 @@ public class UserDtoToStudentService extends EntityMapper<StudentEntity, UserDto
     protected UserDto asDto(StudentEntity studentEntity) {
         return UserDto.builder()
                 .name(studentEntity.getName())
-                .dob(studentEntity.getDob())
                 .email(studentEntity.getEmail())
                 .build();
     }
